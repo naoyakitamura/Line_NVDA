@@ -1,0 +1,19 @@
+name: Notify Discord of release
+on:
+  release:
+    types: [published]
+permissions:
+  contents: read
+concurrency:
+  group: discord-release-${{ github.event.release.id }}
+  cancel-in-progress: false
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify downloads and notify Discord
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python3 release/notify_discord.py
+
